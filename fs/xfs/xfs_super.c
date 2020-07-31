@@ -1249,6 +1249,11 @@ xfs_fs_remount(
 	/* ro -> rw */
 	if ((mp->m_flags & XFS_MOUNT_RDONLY) && !(*flags & MS_RDONLY)) {
 		mp->m_flags &= ~XFS_MOUNT_RDONLY;
+		if (mp->m_flags & XFS_MOUNT_NORECOVERY) {
+			xfs_warn(mp,
+		"ro->rw transition prohibited on norecovery mount");
+			return -EINVAL;
+		}
 
 		/*
 		 * If this is the first remount to writeable state we
